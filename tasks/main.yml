@@ -23,4 +23,4 @@
     -pass pass:{{ gpg_pass }}
     | tar -C {{ desktop_user_vars.dir }} -xzv
   args:
-    creates: "{{ desktop_user_vars.dir }}/.gnupg/gpg.conf"
+    creates: "{{ desktop_user_vars.dir }}/.gnupg/trustdb.gpg"
