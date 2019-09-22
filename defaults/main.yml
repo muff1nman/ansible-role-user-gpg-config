@@ -1,0 +1,2 @@
+---
+gpg_tar_archive: "{{ inventory_dir }}/../inventory-files/gpg.tgz.enc"

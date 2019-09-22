@@ -1,0 +1,26 @@
+---
+- name: Setting up User Variables
+  discover_user_vars:
+    user: "{{ ansible_env.USER }}"
+  check_mode: no
+  register: desktop_user_vars
+- name: Create .cache directory
+  file:
+    state: directory
+    path: "{{ desktop_user_vars.dir }}/.cache"
+- name: Copy over gpg files
+  copy:
+    src: "{{ gpg_tar_archive }}"
+    dest: "{{ desktop_user_vars.dir }}/.cache/gpg.tar.enc"
+# encrypt with: 
+# tar -czvf - .gnupg | openssl aes-256-cbc -e -md sha512 -pbkdf2 -iter 1000 -salt -in - -pass pass:{{ gpg_pass }} > gpg.tar.enc
+- name: "Decrypt and untar gpg dir"
+  shell: >
+    openssl aes-256-cbc -d 
+    -md sha512
+    -pbkdf2 -iter 1000 -salt
+    -in {{ desktop_user_vars.dir }}/.cache/gpg.tar.enc
+    -pass pass:{{ gpg_pass }}
+    | tar -C {{ desktop_user_vars.dir }} -xzv
+  args:
+    creates: "{{ desktop_user_vars.dir }}/.gnupg/gpg.conf"
